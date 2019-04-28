@@ -101,7 +101,7 @@ public class WindowService extends Service {
 
                             Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.netease.cloudmusic");
                             startActivity(LaunchIntent);
-                            Toast.makeText(getApplicationContext(), "相应手指抬起业务", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getApplicationContext(), "相应手指抬起业务", Toast.LENGTH_SHORT).show();
                         }
 
                         break;
