@@ -42,7 +42,7 @@ public class MainActivity extends Activity {
         editText.setText( SPUtils.get( this,PACKAGE_NAME,"" ).toString() );
     }
     public void finishs(){
-       this.finish();
+      finish();
     }
     private void initSp() {
         if(  SPUtils.get( this,PACKAGE_NAME,"" ).equals( "" )){
