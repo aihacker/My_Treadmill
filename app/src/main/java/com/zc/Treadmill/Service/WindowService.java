@@ -1,5 +1,6 @@
 package com.zc.Treadmill.Service;
 
+
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +14,10 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.zc.Treadmill.MainActivity;
 import com.zc.Treadmill.R;
+import com.zc.Treadmill.util.SPUtils;
+
 
 public class WindowService extends Service {
 
@@ -42,8 +46,7 @@ public class WindowService extends Service {
         // 设置Window Type
         params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         // 设置悬浮框不可触摸
-        params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-        // 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应
+        params.flags =  WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;        // 悬浮窗不可触摸，不接受任何事件,同时不影响后面的事件响应
         params.format = PixelFormat.RGBA_8888;
         // 设置悬浮框的宽高
         params.width = 200;
@@ -59,7 +62,6 @@ public class WindowService extends Service {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-
                 switch (event.getAction()) {
 
                     case MotionEvent.ACTION_DOWN:
@@ -68,7 +70,7 @@ public class WindowService extends Service {
                         //当手指按下的时候
                         x1 = event.getX();
                         y1 = event.getY();
-                        //手指抬起后是否相应业务
+                        //手指抬起后是响应业务
                         isService = true;
                         paramX = params.x;
                         paramY = params.y;
@@ -99,9 +101,14 @@ public class WindowService extends Service {
                     case MotionEvent.ACTION_UP:
                         if(isService){
 
-                            Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage("com.netease.cloudmusic");
-                            startActivity(LaunchIntent);
-//                            Toast.makeText(getApplicationContext(), "相应手指抬起业务", Toast.LENGTH_SHORT).show();
+                            try {
+                                Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage( SPUtils.get( getApplicationContext(), MainActivity.PACKAGE_NAME ,"").toString() );
+                                startActivity(LaunchIntent);
+                            } catch (Exception e) {
+                                Toast.makeText(getApplicationContext(), "包名错误启动APP失败", Toast.LENGTH_SHORT).show();
+
+                            }
+//                            Toast.makeText(getApplicationContext(), "响应手指抬起业务", Toast.LENGTH_SHORT).show();
                         }
 
                         break;
