@@ -41,9 +41,11 @@ public class MainActivity extends Activity {
         initSp();
         editText.setText( SPUtils.get( this,PACKAGE_NAME,"" ).toString() );
     }
-
+    public void finishs(){
+       this.finish();
+    }
     private void initSp() {
-        if(  SPUtils.get( this,PACKAGE_NAME,"" )==null){
+        if(  SPUtils.get( this,PACKAGE_NAME,"" ).equals( "" )){
             //默认包名为网易云音乐
             SPUtils.put(this ,PACKAGE_NAME,"com.netease.cloudmusic");
         }
@@ -56,17 +58,25 @@ public class MainActivity extends Activity {
         textView.setText( Html.fromHtml( html ) );
         Button button  = findViewById( R.id.butt );
         Button submit  = findViewById( R.id.submit );
+        Button settingsButt  = findViewById( R.id.settingsButt );
 
         button.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                finish();
+                finishs();
             }
         } );
         submit.setOnClickListener( new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 SPUtils.put(MainActivity.this ,PACKAGE_NAME,editText.getText().toString());
+            }
+        } );
+        settingsButt.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =  new Intent(Settings.ACTION_MANAGE_ALL_APPLICATIONS_SETTINGS);
+                startActivity(intent);
             }
         } );
     }
@@ -111,7 +121,6 @@ public class MainActivity extends Activity {
                     iniServie();
                 }
             }
-
         }
     }
     //判断当前应用是否是debug状态

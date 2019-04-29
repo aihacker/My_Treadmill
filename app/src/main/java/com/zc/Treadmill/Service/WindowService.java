@@ -12,6 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.zc.Treadmill.MainActivity;
@@ -23,11 +24,11 @@ public class WindowService extends Service {
 
     private WindowManager windowManager;// 窗口管理者
     private WindowManager.LayoutParams params;// 窗口的属性
-    private Button btnView;
+    private ImageButton btnView;
     private boolean isAdded;
     private float x1;
     private float y1;
-    private boolean isService;
+    private int isService;
 
 
     @Override
@@ -37,8 +38,9 @@ public class WindowService extends Service {
 
     @Override
     public void onCreate() {
-        btnView = new Button(getApplicationContext());
+        btnView = new ImageButton(getApplicationContext());
         btnView.setBackgroundResource( R.drawable.logo );
+
         windowManager = (WindowManager) getApplicationContext()
                 .getSystemService(Context.WINDOW_SERVICE);
         params = new WindowManager.LayoutParams();
@@ -71,7 +73,7 @@ public class WindowService extends Service {
                         x1 = event.getX();
                         y1 = event.getY();
                         //手指抬起后是响应业务
-                        isService = true;
+                        isService = 1;
                         paramX = params.x;
                         paramY = params.y;
                         break;
@@ -84,31 +86,37 @@ public class WindowService extends Service {
                         windowManager.updateViewLayout( btnView, params);
                         float x2 = event.getX();
                         float y2 = event.getY();
-                        if(y1 - y2 > 50) {
+                        if(y1 - y2 > 15 && y1-y2<30){
+                            isService=2;
+                        }else if(y1 - y2 > 50) {
 //                            Toast.makeText(getApplicationContext(), "向上滑", Toast.LENGTH_SHORT).show();
-                            isService = false;
+                            isService = 0;
                         } else if(y2 - y1 > 50) {
-                            isService = false;
+                            isService = 0;
 //                            Toast.makeText(getApplicationContext(), "向下滑", Toast.LENGTH_SHORT).show();
                         } else if(x1 - x2 > 50) {
-                            isService = false;
+                            isService = 0;
 //                            Toast.makeText(getApplicationContext(), "向左滑", Toast.LENGTH_SHORT).show();
                         } else if(x2 - x1 > 50) {
-                            isService = false;
+                            isService = 0;
 //                            Toast.makeText(getApplicationContext(), "向右滑", Toast.LENGTH_SHORT).show();
                         }
                         break;
                     case MotionEvent.ACTION_UP:
-                        if(isService){
-
-                            try {
-                                Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage( SPUtils.get( getApplicationContext(), MainActivity.PACKAGE_NAME ,"").toString() );
-                                startActivity(LaunchIntent);
-                            } catch (Exception e) {
-                                Toast.makeText(getApplicationContext(), "包名错误启动APP失败", Toast.LENGTH_SHORT).show();
-
-                            }
+                        switch (isService){
+                            case 1:
+                                try {
+                                    Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage( SPUtils.get( getApplicationContext(), MainActivity.PACKAGE_NAME ,"").toString() );
+                                    startActivity(LaunchIntent);
+                                } catch (Exception e) {
+                                    Toast.makeText(getApplicationContext(), "启动APP失败", Toast.LENGTH_SHORT).show();
+                                }
 //                            Toast.makeText(getApplicationContext(), "响应手指抬起业务", Toast.LENGTH_SHORT).show();
+                                break;
+                            case 2:
+                                Intent LaunchIntent = getPackageManager().getLaunchIntentForPackage( "com.zc.Treadmill" );
+                                startActivity(LaunchIntent);
+                                break;
                         }
 
                         break;
